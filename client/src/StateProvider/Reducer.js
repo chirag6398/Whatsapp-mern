@@ -4,10 +4,10 @@ export const initialState = {
 };
 
 export const reducer = (state, action) => {
-  if (action.type === "SET_USER") {
+  if (action.type === "USER") {
     return {
       ...state,
-      user: action.user,
+      user: action.payload,
     };
   } else if (action.type === "ADD_ROOM") {
     let currTime = new Date();

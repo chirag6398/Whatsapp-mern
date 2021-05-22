@@ -45,7 +45,7 @@ export default function Login() {
       } else {
         setProcessing(false);
         setSuccessed(true);
-        dispatch({ type: "USER", payload: true });
+        dispatch({ type: "USER", payload: user.email });
 
         history.push("/");
       }
