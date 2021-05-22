@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -11,5 +10,5 @@ mongoose
     console.log("mongo connected");
   })
   .catch((err) => {
-    console.log("connection failed");
+    console.log("connection failed", err);
   });

@@ -6,18 +6,35 @@ import { useStateValue } from "../StateProvider/Stateprovider";
 export default function Sidebarchats({ addNewChat, name, id }) {
   const [seed, setSeed] = useState("");
   const [state, dispatch] = useStateValue();
-  // const [message, setMessage] = useState([]);
-  if (false) {
-    console.log(state);
-  }
+
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 5000));
   }, []);
 
-  const createChat = () => {
+  const createChat = async () => {
     const roomName = prompt("Please enter name of chat room");
+
     if (roomName) {
-      dispatch({ type: "ADD_ROOM", payload: roomName });
+      try {
+        let userRoom = { userName: state.user, roomName: roomName };
+        const res = await fetch("http://localhost:5000/api/user/room/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userRoom),
+        });
+        const data = await res.json();
+        console.log(data);
+        if (data.status === 200) {
+          console.log("user roomname added successfully");
+          dispatch({ type: "ADD_ROOM", payload: roomName });
+        } else {
+          console.log("userName not added");
+        }
+      } catch (err) {
+        console.log("failed to pst");
+      }
     }
   };
   return !addNewChat ? (

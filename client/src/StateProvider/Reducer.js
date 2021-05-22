@@ -1,5 +1,6 @@
 export const initialState = {
   user: null,
+  isLogin: false,
   rooms: [],
 };
 
@@ -19,6 +20,11 @@ export const reducer = (state, action) => {
     let updateRooms = [...state.rooms, obj];
 
     return { ...state, rooms: updateRooms };
+  } else if (action.type === "USER_LOGINED") {
+    return {
+      ...state,
+      isLogin: action.payload,
+    };
   }
 
   return state;

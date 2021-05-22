@@ -55,6 +55,13 @@
   min-width: 167px;
   /* background-color: #004643; */
 }
+.login__fieldCloser > input[type="text" i] {
+  border: none;
+  color: black;
+  margin-left: 3px;
+  min-width: 167px;
+  /* background-color: #004643; */
+}
 .login__fieldCloser > input[type="password" i] {
   border: none;
   color: black;

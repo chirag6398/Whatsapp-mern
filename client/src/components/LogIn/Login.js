@@ -4,17 +4,21 @@ import EmailIcon from "@material-ui/icons/Email";
 import LockIcon from "@material-ui/icons/Lock";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import VisibilityIcon from "@material-ui/icons/Visibility";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
+import PersonIcon from "@material-ui/icons/Person";
 import { useStateValue } from "../../StateProvider/Stateprovider";
 export default function Login() {
   const [state, dispatch] = useStateValue();
-
-  const history = useHistory();
   const [showPassword, setShowPassword] = useState(false);
   const [showCpassword, setShowCpassword] = useState(false);
   const [proccesing, setProcessing] = useState(false);
   const [successed, setSuccessed] = useState(false);
-  const [user, setUser] = useState({ email: "", password: "", cpassword: "" });
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+    cpassword: "",
+    name: "",
+  });
   const showPasswordHandle = () => {
     setShowPassword(!showPassword);
   };
@@ -30,7 +34,7 @@ export default function Login() {
       e.preventDefault();
       setProcessing(true);
       console.log(user);
-      const res = await fetch("/api/register", {
+      const res = await fetch("http://localhost:5000/api/user/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,16 +44,16 @@ export default function Login() {
       const data = await res.json();
 
       console.log(data);
-      if (data.status === 422 || data.status === 400 || !data) {
+      if (data.status === 500 || data.status === 400 || !data) {
         window.alert("invalid credentials");
       } else {
         setProcessing(false);
         setSuccessed(true);
-        dispatch({ type: "USER", payload: user.email });
-
-        history.push("/");
+        dispatch({ type: "USER", payload: user.name });
+        dispatch({ type: "USER_LOGINED", payload: true });
       }
     } catch (err) {
+      setProcessing(false);
       console.log(err);
     }
   };
@@ -66,6 +70,20 @@ export default function Login() {
         <div className="login__rightSide">
           <h2>sign in</h2>
           <form method="POST" onSubmit={submitHandler}>
+            <div className="login__formField">
+              <div className="login__fieldCloser">
+                <label>
+                  <PersonIcon />
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={user.name}
+                  onChange={inputHandler}
+                  placeholder="user name"
+                />
+              </div>
+            </div>
             <div className="login__formField">
               <div className="login__fieldCloser">
                 <label>
@@ -121,7 +139,7 @@ export default function Login() {
                   onChange={inputHandler}
                   placeholder="Confirm Password"
                 />
-                {showPassword ? (
+                {showCpassword ? (
                   <VisibilityIcon
                     style={{ cursor: "pointer" }}
                     onClick={() => {
