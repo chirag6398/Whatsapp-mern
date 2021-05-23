@@ -19,7 +19,7 @@ function App() {
   };
   useEffect(() => {
     getUserData();
-  }, []);
+  }, [state.triger]);
   return (
     <div className="app">
       {!state.isLogin ? (

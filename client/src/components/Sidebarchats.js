@@ -28,6 +28,7 @@ export default function Sidebarchats({ addNewChat, name, id }) {
         console.log(data);
         if (data.status === 200) {
           console.log("user roomname added successfully");
+          dispatch({ type: "TRIGER_CALL", payload: !state.triger });
         } else {
           console.log("userName not added");
         }
