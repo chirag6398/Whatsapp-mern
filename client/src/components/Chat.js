@@ -8,40 +8,83 @@ import MicIcon from "@material-ui/icons/MicNoneOutlined";
 import SentimentVerySatisfiedIcon from "@material-ui/icons/SentimentVerySatisfied";
 import { useParams } from "react-router-dom";
 import { useStateValue } from "../StateProvider/Stateprovider";
+import getRoomMessages from "../services/getRoomMessages";
 
 export default function Chat() {
-  const [state] = useStateValue();
+  const [state, dispatch] = useStateValue();
   const [seed, setSeed] = useState("");
   const [input, setInput] = useState("");
   const { roomId } = useParams();
-  const [messages, setMessages] = useState([]);
+  // const [messages, setMessages] = useState(state.);
   const divRef = useRef(null);
 
   const inputHandler = (e) => {
     setInput(e.target.value);
   };
-  let currRoom = state.rooms.filter((e) => e.id === roomId);
+  let currRoom = state.rooms.filter((e) => e._id === roomId);
 
   useEffect(() => {
     divRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [state.messages]);
 
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 5000));
   }, []);
 
-  const sendMessage = (e) => {
-    e.preventDefault();
-    let obj = { message: input, name: "temprary" };
-    setMessages([...messages, obj]);
-    setInput("");
+  const getMessages = async () => {
+    const data = await getRoomMessages(currRoom[0]?.roomName);
+    if (data.status === 200) {
+      dispatch({ type: "ROOM_MESSAGES", payload: data.data });
+    }
+  };
+  useEffect(() => {
+    getMessages();
+  }, [state.messageTriger, roomId]);
+
+  const sendMessage = async (e) => {
+    try {
+      e.preventDefault();
+
+      let hr = new Date().getHours();
+      let min = new Date().getMinutes().toLocaleString();
+      let curTime = undefined;
+      if (hr === 24) {
+        curTime = "00" + ":" + min + " am";
+      } else if (hr >= 12) {
+        curTime = (hr % 12) + ":" + min + " pm";
+      } else if (hr < 12) {
+        curTime = hr + ":" + min + " am";
+      }
+
+      const res = await fetch("/api/user/message/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: state.user,
+          message: input,
+          time: curTime,
+          room: currRoom[0]?.roomName,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.status === 200) {
+        dispatch({ type: "MESSAGE_TRI", payload: !state.messageTriger });
+
+        setInput("");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <div className={chatStyle.chat_container}>
       <div className={chatStyle.chat_header}>
         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
         <div className={chatStyle.header_info}>
-          <h3>{currRoom[0]?.name}</h3>
+          <h3>{currRoom[0]?.roomName}</h3>
           <p>Last seen at{new Date().toLocaleTimeString()}</p>
         </div>
         <div className={chatStyle.header_right}>
@@ -57,7 +100,7 @@ export default function Chat() {
         </div>
       </div>
       <div className={chatStyle.chat_body}>
-        {messages.map((message, i) => {
+        {state.messages?.map((message, i) => {
           return (
             <div key={i}>
               <p className={`${chatStyle.message} ${chatStyle.receiver}`}>
@@ -81,7 +124,7 @@ export default function Chat() {
                     flexDirection: "row-reverse",
                   }}
                 >
-                  4:00 pm
+                  {message.time}
                 </span>
               </p>
               <div ref={divRef} />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../../styles/login.css";
 import EmailIcon from "@material-ui/icons/Email";
 import LockIcon from "@material-ui/icons/Lock";
@@ -19,6 +19,10 @@ export default function Login() {
     cpassword: "",
     name: "",
   });
+
+  if (false) {
+    console.log(state);
+  }
   const showPasswordHandle = () => {
     setShowPassword(!showPassword);
   };

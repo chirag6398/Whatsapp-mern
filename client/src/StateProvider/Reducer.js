@@ -3,6 +3,8 @@ export const initialState = {
   isLogin: false,
   rooms: [],
   triger: false,
+  messageTriger: false,
+  messages: [],
 };
 
 export const reducer = (state, action) => {
@@ -20,6 +22,10 @@ export const reducer = (state, action) => {
     };
   } else if (action.type === "TRIGER_CALL") {
     return { ...state, triger: action.payload };
+  } else if (action.type === "MESSAGE_TRI") {
+    return { ...state, messageTriger: action.payload };
+  } else if (action.type === "ROOM_MESSAGES") {
+    return { ...state, messages: action.payload };
   }
 
   return state;
