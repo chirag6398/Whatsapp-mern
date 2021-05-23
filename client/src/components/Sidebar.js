@@ -35,8 +35,8 @@ export default function Sidebar() {
       </div>
       <div className={sidebarStyle.sidebar_chats}>
         <Sidebarchats addNewChat />
-        {state.rooms.map((v, i) => {
-          return <Sidebarchats key={i} id={v.id} name={v.name} />;
+        {state.rooms?.map((v, i) => {
+          return <Sidebarchats key={i} id={v._id} name={v.roomName} />;
         })}
       </div>
     </div>

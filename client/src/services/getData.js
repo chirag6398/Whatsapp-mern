@@ -1,12 +1,12 @@
 const getData = async () => {
   try {
-    const res = await fetch("http://localhost:5000/api/user/getData", {
+    const res = await fetch("/api/user/getData", {
       method: "GET",
       headers: {
-        // Accept: "application/json",
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
-      //   credentials: "include",
+      credentials: "include",
     });
     const data = await res.json();
     console.log(data);

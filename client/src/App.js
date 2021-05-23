@@ -8,14 +8,18 @@ import { useStateValue } from "./StateProvider/Stateprovider";
 import getData from "./services/getData";
 function App() {
   const [state, dispatch] = useStateValue();
-  console.log(state.user);
+
   const getUserData = async () => {
     const data = await getData();
-    console.log(data);
+    if (data.status === 200) {
+      dispatch({ type: "USER_LOGINED", payload: true });
+      dispatch({ type: "USER", payload: data.name });
+      dispatch({ type: "ADD_ROOM", payload: data.rooms });
+    }
   };
   useEffect(() => {
     getUserData();
-  });
+  }, []);
   return (
     <div className="app">
       {!state.isLogin ? (

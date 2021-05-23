@@ -34,7 +34,7 @@ export default function Login() {
       e.preventDefault();
       setProcessing(true);
       console.log(user);
-      const res = await fetch("http://localhost:5000/api/user/register", {
+      const res = await fetch("/api/user/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const userModel = require("../model/userSchema");
+const roomModel = require("../model/roomSchema");
 const hashPassword = async (password) => {
   password = await bcrypt.hash(password, 12);
   return password;
@@ -61,7 +62,8 @@ module.exports = {
         const newUser = userModel.create({ name, email, password, cpassword });
         if (newUser) {
           const token = await existUser.generateAuthToken();
-          console.log(token);
+          console.log("token", token);
+
           res.cookie("jwttoken", token, {
             expires: new Date(Date.now() + 25892000000),
             httpOnly: true,
@@ -79,18 +81,28 @@ module.exports = {
       return res.status(500).json({ error: "server down", status: 500 });
     }
   },
+
   async getData(req, res) {
-    console.log(req.userName);
-    return res.status(200).send(req.userName);
+    console.log(req.userName, req.rooms);
+    return res
+      .status(200)
+      .json({ name: req.userName, rooms: req.rooms, status: 200 });
   },
+
   async auth(req, res, next) {
     try {
       const token = req.cookies.jwtoken;
-      const isVerify = jwt.verify(token, process.env.SECRET_KEY);
-      console.log("isverify", isVerify);
-      const user = await userModel.findOne({ email });
+      const isVerify = await jwt.verify(token, process.env.SECRET_KEY);
+      // console.log("isverify", isVerify);
+      const user = await userModel.findOne({
+        _id: isVerify._id,
+        "tokens.token": token,
+      });
+      const roomNames = await roomModel.find({ userName: user.name });
+      console.log(roomNames);
       if (user) {
         req.userName = user.name;
+        req.rooms = roomNames;
       } else {
         return res.status(400).json({ error: "user not logined", status: 400 });
       }

@@ -17,7 +17,7 @@ export default function Sidebarchats({ addNewChat, name, id }) {
     if (roomName) {
       try {
         let userRoom = { userName: state.user, roomName: roomName };
-        const res = await fetch("http://localhost:5000/api/user/room/create", {
+        const res = await fetch("/api/user/room/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -28,7 +28,6 @@ export default function Sidebarchats({ addNewChat, name, id }) {
         console.log(data);
         if (data.status === 200) {
           console.log("user roomname added successfully");
-          dispatch({ type: "ADD_ROOM", payload: roomName });
         } else {
           console.log("userName not added");
         }
